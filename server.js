@@ -27,6 +27,7 @@ app.use(morgan('dev'));
 // Setup app folders.
 app.use(express.static('App'));
 
+/*
 const msalConfig = {
     auth: {
         clientId: process.env.AAD_CLIENT_ID,
@@ -36,7 +37,7 @@ const msalConfig = {
 const pca = new PublicClientApplication(msalConfig);
 const provider = new CryptoProvider();
 let pkceVerifier = "";
-
+//TODO
 app.get('/cte',
     async (req, res) => {
 
@@ -71,19 +72,25 @@ app.get('/redirect', async (req, res) => {
         res.status(500).send(error);
     });
 });
+*/
+app.post('/exchange', /* !! SOME AUTHORIZATION HERE!!*/ async (req, res, next) => {
 
-app.post('/exchange', /* !! SOME AUTHORIZATION HERE!!*/ async (req, res) => {
-    // Get Azure AD App client id
-    const appId = process.env.AAD_CLIENT_ID;
-    // Get user's oid
-    const userId = jwt_decode(req.headers.authorization).oid;
+    try {
+        // Get Azure AD App client id
+        const appId = process.env.AAD_CLIENT_ID;
+        // Get user's oid
+        const userId = jwt_decode(req.headers.authorization).oid;
 
-    const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
+        const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
 
-    // Pass the Client ID and oid
-    let communicationIdentityToken = await identityClient.getTokenForTeamsUser(req.body.accessToken, appId, userId);
+        // Pass the Client ID and oid
+        let communicationIdentityToken = await identityClient.getTokenForTeamsUser(req.body.accessToken, appId, userId);
 
-    res.status(200).send(communicationIdentityToken);
+        res.status(200).send(communicationIdentityToken);
+    }
+    catch (err) {
+        next(err);
+    }
 });
 
 
