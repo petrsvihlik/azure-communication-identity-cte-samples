@@ -8,8 +8,9 @@
 
 const msalConfig = {
   auth: {
-    clientId: "1875691f-131f-4802-95a5-4511bde1408e",
-    redirectUri: "http://localhost:6420", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
+    clientId: "1875691f-131f-4802-95a5-4511bde1408e", // Multi-tenant
+    //clientId: "834c8592-72f5-4890-ba10-fc04d1cb392e", // Single-tenant
+    redirectUri: "http://localhost", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
   },
   cache: {
     cacheLocation: "sessionStorage", // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
@@ -148,7 +149,7 @@ function getTokenPopup(request) {
   * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
   */
   request.account = myMSALObj.getAccountByHomeId(accountId);
-
+  request.forceRefresh = true; // just for testing purposes
 
   /**
    * 
@@ -183,7 +184,7 @@ function getTokenPopup(request) {
 
 function passTokenToCteApi() {
   getTokenPopup({
-    scopes: ["User.Read"],  // e.g. ["https://fabrikamb2c.onmicrosoft.com/helloapi/demo.read"]
+    scopes: ["User.Read"]
   })
     .then(response => {
       if (response) {

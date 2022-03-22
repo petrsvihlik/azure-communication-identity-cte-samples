@@ -9,7 +9,7 @@ const jwt_decode = require('jwt-decode');
 dotenv.config();
 
 const HOSTNAME = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 6420;
+const PORT = process.env.PORT || 80;
 const HOST_URI = `http://${HOSTNAME}:${PORT}`;
 const COMMUNICATION_SERVICES_CONNECTION_STRING = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
