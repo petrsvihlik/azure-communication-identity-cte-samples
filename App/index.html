@@ -26,7 +26,7 @@
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/">Azure AD B2C</a>
+    <a class="navbar-brand" href="/">Custom Teams Endpoint</a>
     <div class="btn-group ml-auto dropleft">
       <button type="button" id="signIn" class="btn btn-secondary" onclick="signIn()">Sign-in</button>
       <button type="button" id="signOut" class="btn btn-success d-none" onclick="signOut()">Sign-out</button>
@@ -73,7 +73,7 @@
     const label = document.getElementById('label');
 
     function welcomeUser(username) {
-      welcomeDiv.innerHTML = `Welcome ${username}!`
+      welcomeDiv.innerHTML = `Logged in as ${username}!`
 
       label.classList.add('d-none');
       signInButton.classList.add('d-none');

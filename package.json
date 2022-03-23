@@ -31,8 +31,10 @@
     "@azure/communication-identity": "^1.1.0-beta.1",
     "@azure/msal-browser": "^2.22.1",
     "@azure/msal-node": "^1.7.0",
+    "azure-ad-jwt": "git+https://github.com/MatthewTrout/node-azure-ad-jwt.git",
     "dotenv": "^16.0.0",
     "express": "^4.17.1",
+    "express-azure-jwt": "^0.2.2",
     "jwt-decode": "^3.1.2",
     "morgan": "^1.10.0"
   },

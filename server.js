@@ -3,8 +3,7 @@ const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const { CommunicationIdentityClient } = require('@azure/communication-identity');
-const { PublicClientApplication, CryptoProvider } = require('@azure/msal-node');
-const jwt_decode = require('jwt-decode');
+var jwt = require("express-azure-jwt");
 
 dotenv.config();
 
@@ -73,13 +72,14 @@ app.get('/redirect', async (req, res) => {
     });
 });
 */
-app.post('/exchange', /* !! SOME AUTHORIZATION HERE!!*/ async (req, res, next) => {
+app.post('/exchange', jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0'}), async (req, res, next) => {
 
     try {
         // Get Azure AD App client id
         const appId = process.env.AAD_CLIENT_ID;
+
         // Get user's oid
-        const userId = jwt_decode(req.headers.authorization).oid;
+        const userId = req.user.oid;
 
         const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
 

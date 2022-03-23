@@ -184,7 +184,7 @@ function getTokenPopup(request) {
 
 function passTokenToCteApi() {
   getTokenPopup({
-    scopes: ["User.Read"]
+    scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/CTE.Exchange"]
   })
     .then(response => {
       if (response) {
