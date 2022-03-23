@@ -4,6 +4,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const { CommunicationIdentityClient } = require('@azure/communication-identity');
 var jwt = require("express-azure-jwt");
+const jwtScope = require('express-jwt-scope');
 
 dotenv.config();
 
@@ -26,72 +27,29 @@ app.use(morgan('dev'));
 // Setup app folders.
 app.use(express.static('App'));
 
-/*
-const msalConfig = {
-    auth: {
-        clientId: process.env.AAD_CLIENT_ID,
-        authority: process.env.AAD_AUTHORITY,
-    }
-};
-const pca = new PublicClientApplication(msalConfig);
-const provider = new CryptoProvider();
-let pkceVerifier = "";
-//TODO
-app.get('/cte',
-    async (req, res) => {
+app.post('/exchange',
+    jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0' }),
+    jwtScope('CTE.Exchange', { scopeKey : 'scp' }),
+    async (req, res, next) => {
 
+        try {
+            // Get Azure AD App client id
+            const appId = process.env.AAD_CLIENT_ID;
 
-        const { verifier, challenge } = await provider.generatePkceCodes();
-        pkceVerifier = verifier;
-        // Get the auth code
-        pca.getAuthCodeUrl({
-            scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"],
-            redirectUri: `${HOST_URI}/redirect`,
-            codeChallenge: challenge,
-            codeChallengeMethod: "S256"
-        }).then((response) => {
-            res.redirect(response);
-        }).catch((error) => {
-            console.log(JSON.stringify(error));
-        });
+            // Get user's oid
+            const userId = req.user.oid;
+
+            const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
+
+            // Pass the Client ID and oid
+            let communicationIdentityToken = await identityClient.getTokenForTeamsUser(req.body.accessToken, appId, userId);
+
+            res.status(200).send(communicationIdentityToken);
+        }
+        catch (err) {
+            next(err);
+        }
     });
-
-
-app.get('/redirect', async (req, res) => {
-    // Acquire a token with the Teams.ManageCalls permission 
-    pca.acquireTokenByCode({
-        code: req.query.code,
-        scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"],
-        redirectUri: `${HOST_URI}/redirect`,
-        codeVerifier: pkceVerifier,
-    }).then(async (response) => {
-        res.status(200).send(response.accessToken);
-    }).catch((error) => {
-        console.log(error);
-        res.status(500).send(error);
-    });
-});
-*/
-app.post('/exchange', jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0'}), async (req, res, next) => {
-
-    try {
-        // Get Azure AD App client id
-        const appId = process.env.AAD_CLIENT_ID;
-
-        // Get user's oid
-        const userId = req.user.oid;
-
-        const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
-
-        // Pass the Client ID and oid
-        let communicationIdentityToken = await identityClient.getTokenForTeamsUser(req.body.accessToken, appId, userId);
-
-        res.status(200).send(communicationIdentityToken);
-    }
-    catch (err) {
-        next(err);
-    }
-});
 
 
 // Set up a route for index.html
