@@ -190,7 +190,8 @@ function passTokenToCteApi() {
       if (response) {
         console.log("access_token acquired at: " + new Date().toString());
         try {
-          callCte(response.accessToken);
+          let apiAccessToken = response.accessToken;
+          callCte(apiAccessToken);
         } catch (error) {
           console.log(error);
         }
@@ -201,7 +202,7 @@ function passTokenToCteApi() {
     });
 }
 
-function callCte(token) {
+function callCte(apiAccessToken) {
 
 
   const manageCallsTokenRequest = { scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] };
@@ -210,17 +211,17 @@ function callCte(token) {
 
   myMSALObj.acquireTokenSilent(manageCallsTokenRequest).then(function (accessTokenResponse) {
     // Acquire token silent success
-    let accessToken = accessTokenResponse.accessToken;
+    let teamsUserAccessToken = accessTokenResponse.accessToken;
     // Call your API with token
-    callExchange(token, accessToken);
+    callExchange(apiAccessToken, teamsUserAccessToken);
   }).catch(function (error) {
     //Acquire token silent failure, and send an interactive request
     if (error instanceof msal.InteractionRequiredAuthError) {
       myMSALObj.acquireTokenPopup(manageCallsTokenRequest).then(function (accessTokenResponse) {
         // Acquire token interactive success
-        let accessToken = accessTokenResponse.accessToken;
+        let teamsUserAccessToken = accessTokenResponse.accessToken;
         // Call your API with token
-        callExchange(token, accessToken);
+        callExchange(apiAccessToken, teamsUserAccessToken);
       }).catch(function (error) {
         // Acquire token interactive failure
         console.log(error);
@@ -231,10 +232,10 @@ function callCte(token) {
 
 }
 
-function callExchange(token, accessToken) {
+function callExchange(apiAccessToken, teamsUserAccessToken) {
 
   const headers = new Headers();
-  const bearer = `Bearer ${token}`;
+  const bearer = `Bearer ${apiAccessToken}`;
 
   headers.append("Authorization", bearer);
   headers.append("Content-Type", "application/json");
@@ -242,11 +243,10 @@ function callExchange(token, accessToken) {
   fetch("/exchange", {
     method: "POST",
     headers: headers,
-    body: JSON.stringify({ accessToken: accessToken })
+    body: JSON.stringify({ accessToken: teamsUserAccessToken })
   })
     .then(response => response.json())
     .then(response => {
-
       if (response) {
         logMessage('Token: ' + JSON.stringify(response));
       }

@@ -6,30 +6,27 @@ const { CommunicationIdentityClient } = require('@azure/communication-identity')
 var jwt = require("express-azure-jwt");
 const jwtScope = require('express-jwt-scope');
 
+// Initialize variables
 dotenv.config();
-
 const HOSTNAME = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 80;
 const HOST_URI = `http://${HOSTNAME}:${PORT}`;
 const COMMUNICATION_SERVICES_CONNECTION_STRING = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
-// initialize express.
+// Initialize express
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 
-// Initialize variables.
-let port = PORT;
-
-// Configure morgan module to log all requests.
+// Configure morgan module to log all requests
 app.use(morgan('dev'));
 
-// Setup app folders.
+// Setup app folders
 app.use(express.static('App'));
 
 app.post('/exchange',
-    jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0' }),
-    jwtScope('CTE.Exchange', { scopeKey : 'scp' }),
+    jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0' }), // Verify JWT integrity
+    jwtScope('CTE.Exchange', { scopeKey: 'scp' }), // Verify required scopes
     async (req, res, next) => {
 
         try {
@@ -39,6 +36,7 @@ app.post('/exchange',
             // Get user's oid
             const userId = req.user.oid;
 
+            // Create a new CommunicationIdentityClient
             const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
 
             // Pass the Client ID and oid
@@ -57,6 +55,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-// Start the server.
-app.listen(port);
-console.log(`Listening on port ${port}...`);
+// Start the server
+app.listen(PORT);
+console.log(`Listening on port ${PORT}...`);
