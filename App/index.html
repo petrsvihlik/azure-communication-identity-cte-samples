@@ -41,7 +41,7 @@
     <h5 class="card-header text-center">Exchanging Azure AD access token of a Teams User for a Communication Identity Token</h5>
     <div class="card-body text-center">
       <h5 id="label" class="card-title">Sign-in with Azure AD</h5>
-      <pre id="response" class="card-text"></pre>
+      <code id="response" class="card-text"></code><br />
       <button type="button" id="callCteButton" class="btn btn-primary d-none" onclick="passTokenToCteApi()">Call
         CTE</button>
     </div>
@@ -86,6 +86,7 @@
 
     function logMessage(s) {
       response.appendChild(document.createTextNode('\n' + s + '\n'));
+      response.appendChild(document.createElement('hr'));
     }
   </script>
 

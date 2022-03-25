@@ -248,7 +248,7 @@ function callExchange(apiAccessToken, teamsUserAccessToken) {
     .then(response => response.json())
     .then(response => {
       if (response) {
-        logMessage('Token: ' + JSON.stringify(response));
+        logMessage(JSON.stringify(response));
       }
     })
     .catch(error => {
