@@ -16,7 +16,7 @@ const COMMUNICATION_SERVICES_CONNECTION_STRING = process.env.COMMUNICATION_SERVI
 // Initialize express
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 // Configure morgan module to log all requests
 app.use(morgan('dev'));

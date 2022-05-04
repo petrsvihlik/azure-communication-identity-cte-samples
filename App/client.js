@@ -120,6 +120,7 @@ function signIn() {
 
   myMSALObj.loginPopup({
     scopes: ["openid"], // By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
+    prompt: 'select_account'
   })
     .then(handleResponse)
     .catch(error => {
@@ -215,7 +216,7 @@ function callCte(apiAccessToken) {
     // Call your API with token
     callExchange(apiAccessToken, teamsUserAccessToken);
   }).catch(function (error) {
-    //Acquire token silent failure, and send an interactive request
+    // Acquire token silent failure, and send an interactive request
     if (error instanceof msal.InteractionRequiredAuthError) {
       myMSALObj.acquireTokenPopup(manageCallsTokenRequest).then(function (accessTokenResponse) {
         // Acquire token interactive success
