@@ -179,6 +179,7 @@ function acquireAadToken(request) {
 async function getCommunicationTokenForTeamsUser() {
   // Acquire a token with a custom scope for Contoso's 3P AAD app
   let apiAccessToken = await acquireAadToken({ scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/Contoso.CustomScope"] })
+  
   // Acquire a token with a delegated permission Teams.ManageCalls for CTE's 1P AAD app
   let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] });
 
