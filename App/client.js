@@ -143,8 +143,8 @@ function signOut() {
   myMSALObj.logoutPopup(logoutRequest);
 }
 
-function getTokenPopup(request) {
 
+function acquireAadToken(request) {
   /**
   * See here for more information on account retrieval: 
   * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
@@ -152,107 +152,55 @@ function getTokenPopup(request) {
   request.account = myMSALObj.getAccountByHomeId(accountId);
   request.forceRefresh = true; // just for testing purposes
 
-  /**
-   * 
-   */
-  return myMSALObj.acquireTokenSilent(request)
-    .then((response) => {
-      // In case the response from B2C server has an empty accessToken field
-      // throw an error to initiate token acquisition
-      if (!response.accessToken || response.accessToken === "") {
-        throw new msal.InteractionRequiredAuthError;
-      }
-      return response;
-    })
-    .catch(error => {
-      console.log("Silent token acquisition fails. Acquiring token using popup. \n", error);
-      if (error instanceof msal.InteractionRequiredAuthError) {
-        // fallback to interaction when silent call fails
-        return myMSALObj.acquireTokenPopup(request)
-          .then(response => {
-            console.log(response);
-            return response;
-          }).catch(error => {
-            console.log(error);
-          });
-      } else {
-        console.log(error);
-      }
-    });
-}
-
-
-
-function passTokenToCteApi() {
-  getTokenPopup({
-    scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/CTE.Exchange"]
-  })
-    .then(response => {
-      if (response) {
-        console.log("access_token acquired at: " + new Date().toString());
-        try {
-          let apiAccessToken = response.accessToken;
-          callCte(apiAccessToken);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-}
-
-function callCte(apiAccessToken) {
-
-
-  const manageCallsTokenRequest = { scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] };
-
-  manageCallsTokenRequest.account = myMSALObj.getAccountByHomeId(accountId);
-
-  myMSALObj.acquireTokenSilent(manageCallsTokenRequest).then(function (accessTokenResponse) {
-    // Acquire token silent success
-    let teamsUserAccessToken = accessTokenResponse.accessToken;
-    // Call your API with token
-    callExchange(apiAccessToken, teamsUserAccessToken);
+  return myMSALObj.acquireTokenSilent(request).then(function (accessTokenResponse) {
+    if (!accessTokenResponse.accessToken || accessTokenResponse.accessToken === "") {
+      throw new msal.InteractionRequiredAuthError;
+    }
+    // Acquire token silent success  
+    return accessTokenResponse.accessToken;
   }).catch(function (error) {
+    console.log("Silent token acquisition fails. Acquiring token using popup. \n", error);
     // Acquire token silent failure, and send an interactive request
     if (error instanceof msal.InteractionRequiredAuthError) {
-      myMSALObj.acquireTokenPopup(manageCallsTokenRequest).then(function (accessTokenResponse) {
-        // Acquire token interactive success
-        let teamsUserAccessToken = accessTokenResponse.accessToken;
-        // Call your API with token
-        callExchange(apiAccessToken, teamsUserAccessToken);
-      }).catch(function (error) {
+      myMSALObj.acquireTokenPopup(request).then(function (accessTokenResponse) {
+        // Acquire token interactive success   
+        console.log(accessTokenResponse);
+        return accessTokenResponse.accessToken;
+      }).catch(function (interactiveError) {
         // Acquire token interactive failure
-        console.log(error);
+        console.log(interactiveError);
       });
     }
     console.log(error);
   });
-
 }
 
-function callExchange(apiAccessToken, teamsUserAccessToken) {
 
-  const headers = new Headers();
-  const bearer = `Bearer ${apiAccessToken}`;
+async function exchangeToken() {
+  let apiAccessToken = await acquireAadToken({ scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/CTE.Exchange"] })
+  let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] });
 
-  headers.append("Authorization", bearer);
-  headers.append("Content-Type", "application/json");
+  // Call your API with token
+  if (apiAccessToken !== null && teamsUserAccessToken !== null) {
+    const headers = new Headers();
+    const bearer = `Bearer ${apiAccessToken}`;
 
-  fetch("/exchange", {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify({ accessToken: teamsUserAccessToken })
-  })
-    .then(response => response.json())
-    .then(response => {
-      if (response) {
-        logMessage(JSON.stringify(response));
-      }
+    headers.append("Authorization", bearer);
+    headers.append("Content-Type", "application/json");
+
+    fetch("/exchange", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ accessToken: teamsUserAccessToken })
     })
-    .catch(error => {
-      console.log(error);
-    });
+      .then(response => response.json())
+      .then(response => {
+        if (response) {
+          logMessage(JSON.stringify(response));
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
 }
