@@ -177,20 +177,18 @@ function acquireAadToken(request) {
 
 
 async function exchangeToken() {
-  let apiAccessToken = await acquireAadToken({ scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/CTE.Exchange"] })
+  // Acquire a token with a custom scope for Contoso's 3P AAD app
+  let apiAccessToken = await acquireAadToken({ scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/Contoso.CustomScope"] })
+  // Acquire a token with a delegated permission Teams.ManageCalls for CTE's 1P AAD app
   let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] });
 
   // Call your API with token
   if (apiAccessToken !== null && teamsUserAccessToken !== null) {
-    const headers = new Headers();
-    const bearer = `Bearer ${apiAccessToken}`;
-
-    headers.append("Authorization", bearer);
-    headers.append("Content-Type", "application/json");
-
     fetch("/exchange", {
       method: "POST",
-      headers: headers,
+      // Use API access token for authentication
+      headers: [["Authorization", `Bearer ${apiAccessToken}`], ["Content-Type", "application/json"]],
+      // Use Teams user access token as payload
       body: JSON.stringify({ accessToken: teamsUserAccessToken })
     })
       .then(response => response.json())

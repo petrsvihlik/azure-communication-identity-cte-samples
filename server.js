@@ -26,7 +26,7 @@ app.use(express.static('App'));
 
 app.post('/exchange',
     jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0' }), // Verify JWT integrity
-    jwtScope('CTE.Exchange', { scopeKey: 'scp' }), // Verify required scopes
+    jwtScope('Contoso.CustomScope', { scopeKey: 'scp' }), // Verify required scopes
     async (req, res, next) => {
 
         try {
