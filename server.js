@@ -9,7 +9,7 @@ const jwtScope = require('express-jwt-scope');
 // Initialize variables
 dotenv.config();
 const HOSTNAME = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3000;
 const HOST_URI = `http://${HOSTNAME}:${PORT}`;
 const COMMUNICATION_SERVICES_CONNECTION_STRING = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
@@ -49,6 +49,11 @@ app.post('/exchange',
         }
     });
 
+app.get('/spa', function (req, res) {
+    // A dedicated Redirect URI path meet the URI restrictions and to prevent the identity platform from choosing an arbitrary URI
+    // More about the Redirect/Reply URI restrictions https://docs.microsoft.com/azure/active-directory/develop/reply-url
+    res.redirect('/');
+});
 
 // Set up a route for index.html
 app.get('*', (req, res) => {

@@ -10,7 +10,7 @@ const msalConfig = {
   auth: {
     clientId: "1875691f-131f-4802-95a5-4511bde1408e", // Multi-tenant
     //clientId: "834c8592-72f5-4890-ba10-fc04d1cb392e", // Single-tenant
-    redirectUri: "http://localhost", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
+    redirectUri: "http://localhost:3000/spa", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
   },
   cache: {
     cacheLocation: "sessionStorage", // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
@@ -179,27 +179,27 @@ function acquireAadToken(request) {
 async function getCommunicationTokenForTeamsUser() {
   // Acquire a token with a custom scope for Contoso's 3P AAD app
   let apiAccessToken = await acquireAadToken({ scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/Contoso.CustomScope"] })
-  
+
   // Acquire a token with a delegated permission Teams.ManageCalls for CTE's 1P AAD app
   let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] });
 
   // Call your API with token
   if (apiAccessToken !== null && teamsUserAccessToken !== null) {
-    fetch("/exchange", {
-      method: "POST",
-      // Use API access token for authentication
-      headers: [["Authorization", `Bearer ${apiAccessToken}`], ["Content-Type", "application/json"]],
-      // Use Teams user access token as payload
-      body: JSON.stringify({ accessToken: teamsUserAccessToken })
-    })
-      .then(response => response.json())
-      .then(response => {
-        if (response) {
-          logMessage(JSON.stringify(response));
-        }
-      })
-      .catch(error => {
-        console.log(error);
+    try {
+      const response = await fetch("/exchange", {
+        method: "POST",
+        // Use API access token for authentication
+        headers: [["Authorization", `Bearer ${apiAccessToken}`], ["Content-Type", "application/json"]],
+        // Use Teams user access token as payload
+        body: JSON.stringify({ accessToken: teamsUserAccessToken })
       });
+      const json = await response.json();
+      if (json) {
+        logMessage(JSON.stringify(json));
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 }
