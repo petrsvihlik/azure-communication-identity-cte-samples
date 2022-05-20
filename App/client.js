@@ -9,7 +9,6 @@
 const msalConfig = {
   auth: {
     clientId: "1875691f-131f-4802-95a5-4511bde1408e", // Multi-tenant
-    //clientId: "834c8592-72f5-4890-ba10-fc04d1cb392e", // Single-tenant
     redirectUri: "http://localhost:3000/spa", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
   },
   cache: {
@@ -178,7 +177,7 @@ function acquireAadToken(request) {
 
 async function getCommunicationTokenForTeamsUser() {
   // Acquire a token with a custom scope for Contoso's 3P AAD app
-  let apiAccessToken = await acquireAadToken({ scopes: ["api://1875691f-131f-4802-95a5-4511bde1408e/Contoso.CustomScope"] })
+  let apiAccessToken = await acquireAadToken({ scopes: [`api://${msalConfig.auth.clientId}/Contoso.CustomScope`] })
 
   // Acquire a token with a delegated permission Teams.ManageCalls for CTE's 1P AAD app
   let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] });
