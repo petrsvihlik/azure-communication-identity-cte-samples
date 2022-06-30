@@ -3,14 +3,13 @@ const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const { CommunicationIdentityClient } = require('@azure/communication-identity');
-var jwt = require("express-azure-jwt");
-const jwtScope = require('express-jwt-scope');
+var jwt = require('jsonwebtoken');
+var jwksClient = require('jwks-rsa');
+
 
 // Initialize variables
 dotenv.config();
-const HOSTNAME = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3000;
-const HOST_URI = `http://${HOSTNAME}:${PORT}`;
 const COMMUNICATION_SERVICES_CONNECTION_STRING = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
 // Initialize express
@@ -24,9 +23,39 @@ app.use(morgan('dev'));
 // Setup app folders
 app.use(express.static('App'));
 
+
+
+const verifyToken = function (req, res, next) {
+    // Verify JWT integrity and check the required scopes
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+        function getKey(header, callback) {
+            var keysUri = `https://login.microsoftonline.com/${process.env.AAD_TENANT_ID}/discovery/keys?appid=${process.env.AAD_CLIENT_ID}`
+            var client = jwksClient({
+                jwksUri: keysUri
+            });
+            client.getSigningKey(header.kid, function (err, key) {
+                var signingKey = key.publicKey || key.rsaPublicKey;
+                callback(null, signingKey);
+            });
+        }
+
+        jwt.verify(token, getKey, {}, function (err, user) {
+            if (err) {
+                return res.sendStatus(403);
+            }
+            req.user = user;
+            next()
+        });
+    } else {
+        res.sendStatus(401);
+    }
+}
+
 app.post('/exchange',
-    jwt({ aadIssuerUrlTemplate: 'https://login.microsoftonline.com/{tenantId}/v2.0' }), // Verify JWT integrity
-    jwtScope('Contoso.CustomScope', { scopeKey: 'scp' }), // Verify required scopes
+    verifyToken,
     async (req, res, next) => {
 
         try {

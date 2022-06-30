@@ -1,7 +1,7 @@
 {
-  "name": "ms-identity-b2c-javascript-spa",
+  "name": "exchange-teams-token",
   "version": "1.0.0",
-  "description": "A Vanilla JavaScript single-page application secured with MSAL.js",
+  "description": "A single-page application secured with MSAL.js that allows users to exchange Teams tokens for communication access tokens.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Azure-Samples/ms-identity-b2c-javascript-spa.git"
+    "url": "git+https://github.com/Azure-Samples/communication-services-javascript-quickstarts.git"
   },
   "keywords": [
     "javascript",
@@ -18,28 +18,26 @@
     "authentication",
     "microsoft",
     "ms-identity",
-    "azure-ad-b2c",
-    "single-page app"
+    "single-page-app",
+    "azure-communication-services",
+    "communication-identity"
   ],
   "author": "derisen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Azure-Samples/ms-identity-b2c-javascript-spa/issues"
+    "url": "https://github.com/Azure-Samples/communication-services-javascript-quickstarts/issues"
   },
-  "homepage": "https://github.com/Azure-Samples/ms-identity-b2c-javascript-spa#readme",
+  "homepage": "https://github.com/Azure-Samples/communication-services-javascript-quickstarts/exchange-teams-token#readme",
   "dependencies": {
-    "@azure/communication-identity": "^1.1.0-beta.1",
-    "@azure/msal-browser": "^2.22.1",
-    "@azure/msal-node": "^1.7.0",
-    "azure-ad-jwt": "git+https://github.com/MatthewTrout/node-azure-ad-jwt.git",
-    "dotenv": "^16.0.0",
-    "express": "^4.17.1",
-    "express-azure-jwt": "^0.2.2",
-    "express-jwt-scope": "^0.1.0",
-    "jwt-decode": "^3.1.2",
+    "@azure/communication-identity": "^1.1.0-alpha.20220609.2",
+    "@azure/msal-browser": "^2.26.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^2.1.4",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.3"
+    "nodemon": "^2.0.18"
   }
 }
