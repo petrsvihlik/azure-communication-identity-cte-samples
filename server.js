@@ -3,8 +3,8 @@ const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const { CommunicationIdentityClient } = require('@azure/communication-identity');
-var jwt = require('jsonwebtoken');
-var jwksClient = require('jwks-rsa');
+var { expressjwt: jwt } = require("express-jwt");
+const jwksClient = require('jwks-rsa');
 
 
 // Initialize variables
@@ -23,41 +23,20 @@ app.use(morgan('dev'));
 // Setup app folders
 app.use(express.static('App'));
 
-
-
-const verifyToken = function (req, res, next) {
-    // Verify JWT integrity and check the required scopes
-    const authHeader = req.headers.authorization;
-
-    if (authHeader) {
-        const token = authHeader.split(' ')[1];
-        function getKey(header, callback) {
-            var keysUri = `https://login.microsoftonline.com/${process.env.AAD_TENANT_ID}/discovery/keys?appid=${process.env.AAD_CLIENT_ID}`
-            var client = jwksClient({
-                jwksUri: keysUri
-            });
-            client.getSigningKey(header.kid, function (err, key) {
-                var signingKey = key.publicKey || key.rsaPublicKey;
-                callback(null, signingKey);
-            });
-        }
-
-        jwt.verify(token, getKey, {}, function (err, user) {
-            if (err) {
-                return res.sendStatus(403);
-            }
-            req.user = user;
-            next()
-        });
-    } else {
-        res.sendStatus(401);
-    }
-}
+const checkJwt = jwt({
+    secret: jwksClient.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: `https://login.microsoftonline.com/${process.env.AAD_TENANT_ID}/discovery/keys?appid=${process.env.AAD_CLIENT_ID}`
+    }),
+    requestProperty: 'user',
+    algorithms: ['RS256'],
+});
 
 app.post('/exchange',
-    verifyToken,
+    checkJwt,
     async (req, res, next) => {
-
         try {
             // Get Azure AD App client id
             const appId = process.env.AAD_CLIENT_ID;
@@ -65,11 +44,14 @@ app.post('/exchange',
             // Get user's oid
             const userId = req.user.oid;
 
+            // The Teams user token to be exchanged for a Communication token
+            const teamsUserAadToken = req.body.accessToken;
+
             // Create a new CommunicationIdentityClient
             const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
 
-            // Pass the Client ID and oid
-            let communicationIdentityToken = await identityClient.getTokenForTeamsUser(req.body.accessToken, appId, userId);
+            // Pass the Teams Azure AD token, Azure App's Client ID and Teams user's oid
+            let communicationIdentityToken = await identityClient.getTokenForTeamsUser(teamsUserAadToken, appId, userId);
 
             res.status(200).send(communicationIdentityToken);
         }
