@@ -4,8 +4,11 @@
   "description": "A single-page application secured with MSAL.js allowing users to exchange Teams tokens for Communication access tokens.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "npm run webpack && node server.js",
+    "dev": "npm run webpack &&  nodemon server.js",
+    "debug": "npm run webpack &&  nodemon server.js",
+    "postinstall": "(cd ./App && npm install)",
+    "webpack": "(cd ./App && npm run webpack)"
   },
   "repository": {
     "type": "git",
@@ -38,8 +41,6 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.18",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^4.10.0"
+    "nodemon": "^2.0.18"
   }
 }
