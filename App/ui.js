@@ -18,8 +18,9 @@ export const welcomeUser = function (username) {
     welcomeDiv.innerHTML = `Logged in as ${username}!`
     welcomeDiv.classList.remove('d-none');
 
-    document.getElementById('label').classList.add('d-none');
     document.getElementById('title-div').classList.add('d-none');
+    document.getElementById('card-content').classList.remove('d-none');
+
 
     document.getElementById('signInBtn').classList.add('d-none');
     document.getElementById('signOutBtn').classList.remove('d-none');

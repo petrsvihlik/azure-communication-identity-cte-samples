@@ -136,8 +136,8 @@ const getCommunicationTokenForTeamsUser = async function () {
   // Acquire a token with a custom scope for Contoso's 3P AAD app
   let apiAccessToken = await acquireAadToken({ scopes: [`${msalConfig.auth.clientId}/.default`] })
 
-  // Acquire a token with a delegated permission Teams.ManageCalls for CTE's 1P AAD app
-  let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls"] });
+  // Acquire a token with delegated permissions Teams.ManageCalls and Teams.ManageChats for CTE's 1P AAD app
+  let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls", "https://auth.msft.communication.azure.com/Teams.ManageChats"] });
 
   // Call your API with token
   if (apiAccessToken !== null && teamsUserAccessToken !== null) {
@@ -161,6 +161,7 @@ const getCommunicationTokenForTeamsUser = async function () {
 }
 
 const displayToken = async function () {
+  // Initialize a credential object that can be used for Calling (to create a callAgent)
   const tokenCredential = new AzureCommunicationTokenCredential(
     {
       tokenRefresher: async () => getCommunicationTokenForTeamsUser(),

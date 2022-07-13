@@ -7,12 +7,12 @@ const { expressjwt: jwt } = require("express-jwt");
 const jwksClient = require('jwks-rsa');
 
 
-// Initialize variables
+// Initialize environment variables
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const COMMUNICATION_SERVICES_CONNECTION_STRING = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
 
-// Initialize express
+// Initialize Express.js
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,14 +23,15 @@ app.use(morgan('dev'));
 // Setup app folders
 app.use(express.static('App'));
 
+// Initialize the middleware for validating JWTs
 const checkJwt = jwt({
     secret: jwksClient.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `https://login.microsoftonline.com/${process.env.AAD_TENANT_ID}/discovery/keys?appid=${process.env.AAD_CLIENT_ID}`
+        jwksUri: `https://login.microsoftonline.com/${process.env.AAD_TENANT_ID}/discovery/keys?appid=${process.env.AAD_CLIENT_ID}` // Obtain public signing keys from a well-known URL
     }),
-    requestProperty: 'user',
+    requestProperty: 'user', // Name of the property in the request object where the payload is set.
     algorithms: ['RS256'],
 });
 
@@ -61,7 +62,7 @@ app.post('/exchange',
     });
 
 app.get('/spa', function (req, res) {
-    // A dedicated Redirect URI path meet the URI restrictions and to prevent the identity platform from choosing an arbitrary URI
+    // A dedicated Redirect URI path to meet the URI restrictions and to prevent the identity platform from choosing an arbitrary URI
     // More about the Redirect/Reply URI restrictions https://docs.microsoft.com/azure/active-directory/develop/reply-url
     res.redirect('/');
 });
