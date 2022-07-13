@@ -27,9 +27,8 @@ export const welcomeUser = function (username) {
     document.getElementById('callCteButton').classList.remove('d-none');
 }
 
-export const logMessage = function (s) {
+export const renderToken = function (token) {
     const response = document.getElementById("response");
-    response.appendChild(document.createTextNode('\n' + s + '\n'));
-    response.appendChild(document.createElement('hr'));
+    response.replaceChildren(document.createTextNode('\n' + JSON.stringify(token, null, 4) + '\n'));
 }
 

@@ -1,6 +1,7 @@
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
-import { welcomeUser, logMessage, initUI } from './ui.js';
+import { welcomeUser, renderToken, initUI } from './ui.js';
 import { msalConfig } from './authConfig.js';
+import jwt_decode from "jwt-decode";
 
 // Create the main myMSALObj instance
 // The configuration parameters are located at authConfig.js
@@ -178,8 +179,8 @@ const displayToken = async function () {
       refreshProactively: true,
     });
   const token = await tokenCredential.getToken();
-
-  logMessage(JSON.stringify(token));
+  const decoded = jwt_decode(token.token);
+  renderToken(decoded);
 }
 
 // Start the app
