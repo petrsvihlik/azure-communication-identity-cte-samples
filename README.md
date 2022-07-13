@@ -34,7 +34,7 @@ The server part of the sample is based on [Express.js](https://expressjs.com/) a
 1. Run `mv .env.example .env` to initialize a `.env` configuration file from a template.
 1. With the Communication Services procured in pre-requisites and Azure AD Tenant and App Registration procured as part of the Administrator actions, you can now add the connection string, tenant ID and app client ID to the `.env` file.
 
-    ```powershell
+    ```ini
     # Azure Communication Services Connection String
     COMMUNICATION_SERVICES_CONNECTION_STRING="endpoint=https://<acs-resource>.communication.azure.com/;accesskey=<access-key>"
 
