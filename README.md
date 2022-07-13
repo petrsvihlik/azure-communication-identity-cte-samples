@@ -54,3 +54,25 @@ The server part of the sample is based on [Express.js](https://expressjs.com/) a
 From a console prompt, navigate to the directory containing the server.js file, then execute the following node command to run the app.
 
 `npm start`
+
+## Next steps
+
+### Extending the sample with a custom scope validation
+
+For the simplicity of this sample, only the `.default` scope is required while acquiring the Azure AD token. It is possible to extend this app with a custom scope validation logic by following the steps below:
+
+1. Add a custom scope by following [this tutorial](https://docs.microsoft.com//azure/active-directory/develop/quickstart-configure-app-expose-web-apis#add-a-scope)
+1. Run 'npm install express-jwt-authz' from the console in the root folder of the project
+1. Uncomment the following lines in `server.js` and adjust the scope name to match your custom scope name
+
+    ```js
+    const jwtAuthz = require('express-jwt-authz');
+    ...
+    jwtAuthz([ '<custom-scope-name>' ], {}),
+    ```
+
+1. Change the scope name in `client.js` from `${msalConfig.auth.clientId}/.default` to your custom scope `api://<application-client-id>/<custom-scope-name>`
+
+    ```js
+    let apiAccessToken = await acquireAadToken({ scopes: [`${msalConfig.auth.clientId}/.default`] })
+    ```
