@@ -5,7 +5,8 @@ const dotenv = require('dotenv');
 const { CommunicationIdentityClient } = require('@azure/communication-identity');
 const { expressjwt: jwt } = require("express-jwt");
 const jwksClient = require('jwks-rsa');
-
+/** To verify a custom scope, uncomment the following line and run 'npm install express-jwt-authz' from the console */
+// const jwtAuthz = require('express-jwt-authz');
 
 // Initialize environment variables
 dotenv.config();
@@ -37,6 +38,8 @@ const checkJwt = jwt({
 
 app.post('/exchange',
     checkJwt,
+    /** To verify a custom scope, uncomment the following line and the import at the top of this file */
+    //jwtAuthz([ '<custom-scope-name>' ], {}),
     async (req, res, next) => {
         try {
             // Get Azure AD App client id

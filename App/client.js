@@ -3,7 +3,7 @@ import { welcomeUser, logMessage, initUI } from './ui.js';
 import { msalConfig } from './authConfig.js';
 
 // Create the main myMSALObj instance
-// configuration parameters are located at authConfig.js
+// The configuration parameters are located at authConfig.js
 const myMSALObj = new msal.PublicClientApplication(msalConfig);
 
 let accountId = "";
@@ -106,7 +106,7 @@ const acquireAadToken = function (request) {
   * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
   */
   request.account = myMSALObj.getAccountByHomeId(accountId);
-  request.forceRefresh = true; // just for testing purposes
+  request.forceRefresh = false; // set to true to skip the cache
 
   return myMSALObj.acquireTokenSilent(request).then(function (accessTokenResponse) {
     if (!accessTokenResponse.accessToken || accessTokenResponse.accessToken === "") {
@@ -133,13 +133,23 @@ const acquireAadToken = function (request) {
 
 
 const getCommunicationTokenForTeamsUser = async function () {
-  // Acquire a token with a custom scope for Contoso's 3P AAD app
+  /** 
+  * Acquire a token with a scope of Contoso's Azure AD app
+  * For the simplicity of this sample, we are using the .default scope. In a real-world scenario, this would be a custom scope.
+  * To do that, follow the tutorial at https://docs.microsoft.com/azure/active-directory/develop/quickstart-configure-app-expose-web-apis
+  */
   let apiAccessToken = await acquireAadToken({ scopes: [`${msalConfig.auth.clientId}/.default`] })
 
-  // Acquire a token with delegated permissions Teams.ManageCalls and Teams.ManageChats for CTE's 1P AAD app
-  let teamsUserAccessToken = await acquireAadToken({ scopes: ["https://auth.msft.communication.azure.com/Teams.ManageCalls", "https://auth.msft.communication.azure.com/Teams.ManageChats"] });
+  // Acquire a token with delegated permissions Teams.ManageCalls and Teams.ManageChats
+  let teamsUserAccessToken = await acquireAadToken({
+    scopes:
+      [
+        "https://auth.msft.communication.azure.com/Teams.ManageCalls",
+        "https://auth.msft.communication.azure.com/Teams.ManageChats"
+      ]
+  });
 
-  // Call your API with token
+  // Call the backend API for token exchange
   if (apiAccessToken !== null && teamsUserAccessToken !== null) {
     try {
       const response = await fetch("/exchange", {
