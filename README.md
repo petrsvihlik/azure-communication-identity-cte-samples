@@ -51,9 +51,13 @@ The server part of the sample is based on [Express.js](https://expressjs.com/) a
 
 ## Run the code
 
-From a console prompt, navigate to the directory containing the server.js file, then execute the following node command to run the app.
+From a console prompt, navigate to the directory containing the `server.js` file, then execute the following node commands to run the app.
+1. `npm i` to install the dependencies
+2. `npm start`
 
-`npm start`
+Open your browser and navigate to [http://localhost:3000/](http://localhost:3000/). You should be presented with the following screen:
+
+![Create Communication token for Teams users](https://user-images.githubusercontent.com/9810625/178793596-ecad9fa9-3cdb-4d9d-8853-db35d4a53158.png)
 
 ## Next steps
 
