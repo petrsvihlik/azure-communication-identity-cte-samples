@@ -52,7 +52,7 @@ From a console prompt, navigate to the directory containing the `server.js` file
 
 Open your browser and navigate to [http://localhost:3000/](http://localhost:3000/). You should be presented with the following screen:
 
-![Create Communication token for Teams users](https://user-images.githubusercontent.com/9810625/178793596-ecad9fa9-3cdb-4d9d-8853-db35d4a53158.png)
+![Create Communication token for Teams users](https://user-images.githubusercontent.com/9810625/178840056-0e387f72-c0ee-4b65-95b2-2eff9c1f5ee6.gif)
 
 ## Next steps
 
