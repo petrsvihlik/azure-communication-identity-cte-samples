@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const { CommunicationIdentityClient } = require('@azure/communication-identity');
-var { expressjwt: jwt } = require("express-jwt");
+const { expressjwt: jwt } = require("express-jwt");
 const jwksClient = require('jwks-rsa');
 
 

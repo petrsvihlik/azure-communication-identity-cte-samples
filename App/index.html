@@ -8,27 +8,23 @@
   <link rel="SHORTCUT ICON" href="./favicon.svg" type="image/x-icon">
 
   <!-- msal.min.js can be used in the place of msal.js; included msal.js to make debug easy -->
-  <script src="https://alcdn.msauth.net/browser/2.26.0/js/msal-browser.js"
-    integrity="sha384-fitpJWrpyl840mvd9nBFLGulqR4BJzvim0fzrXQKdsVh2AQzE4rTTJ0o5o+x+dRK"
+  <script src="https://alcdn.msauth.net/browser/2.27.0/js/msal-browser.js"
+    integrity="sha384-CsXI9QUbEXvbc1SIiLQ1/sUNkZZfkQSamJ2YU4g/yDKQNDyn8D2HTgR1ww7QV5+U"
     crossorigin="anonymous"></script>
 
-  <!-- To help ensure reliability, Microsoft provides a second CDN -->
-  <script type="text/javascript">
-    if (typeof Msal === 'undefined') document.write(unescape("%3Cscript src='https://alcdn.msftauth.net/browser/2.26.0/js/msal-browser.js' type='text/javascript' crossorigin='anonymous' %3E%3C/script%3E"));
-  </script>
-  <script type="text/javascript" src="https://alcdn.msauth.net/browser/2.22.1/js/msal-browser.min.js"></script>
-
-  <!-- adding Bootstrap 4 for UI components  -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <!-- adding Bootstrap 5 for UI components  -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/">Custom Teams Endpoint</a>
-    <div class="btn-group ml-auto dropleft">
-      <button type="button" id="signInBtn" class="btn btn-secondary">Sign-in</button>
-      <button type="button" id="signOutBtn" class="btn btn-success d-none">Sign-out</button>
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Custom Teams Endpoint</a>
+      <div class="btn-group ms-auto dropstart">
+        <button type="button" id="signInBtn" class="btn btn-secondary">Sign-in</button>
+        <button type="button" id="signOutBtn" class="btn btn-success d-none">Sign-out</button>
+      </div>
     </div>
   </nav>
   <br>
@@ -49,14 +45,8 @@
   </div>
 
   <!-- importing bootstrap.js and supporting js libraries -->
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
     crossorigin="anonymous"></script>
 
   <script type="text/javascript" src="./bundle.js"></script>
