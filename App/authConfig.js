@@ -8,7 +8,7 @@
 
  export const msalConfig = {
     auth: {
-      clientId: "1875691f-131f-4802-95a5-4511bde1408e",
+      clientId: process.env.AAD_CLIENT_ID,
       redirectUri: "http://localhost:3000/spa", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
     },
     cache: {
