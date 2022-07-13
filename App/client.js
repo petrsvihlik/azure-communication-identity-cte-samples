@@ -1,59 +1,19 @@
-/**
- * Configuration object to be passed to MSAL instance on creation. 
- * For a full list of MSAL.js configuration parameters, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
- * For more details on using MSAL.js with Azure AD B2C, visit:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/working-with-b2c.md 
- */
-
-const msalConfig = {
-  auth: {
-    clientId: "1875691f-131f-4802-95a5-4511bde1408e", // Multi-tenant
-    redirectUri: "http://localhost:3000/spa", // You must register this URI on Azure Portal/App Registration. Defaults to "window.location.href".
-  },
-  cache: {
-    cacheLocation: "sessionStorage", // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-    storeAuthStateInCookie: false, // If you wish to store cache items in cookies as well as browser cache, set this to "true".
-  },
-  system: {
-    loggerOptions: {
-      loggerCallback: (level, message, containsPii) => {
-        if (containsPii) {
-          return;
-        }
-        switch (level) {
-          case msal.LogLevel.Error:
-            console.error(message);
-            return;
-          case msal.LogLevel.Info:
-            console.info(message);
-            return;
-          case msal.LogLevel.Verbose:
-            console.debug(message);
-            return;
-          case msal.LogLevel.Warning:
-            console.warn(message);
-            return;
-        }
-      }
-    }
-  }
-};
+import { AzureCommunicationTokenCredential } from '@azure/communication-common';
+import { welcomeUser, logMessage, initUI } from './ui.js';
+import { msalConfig } from './authConfig.js';
 
 // Create the main myMSALObj instance
 // configuration parameters are located at authConfig.js
 const myMSALObj = new msal.PublicClientApplication(msalConfig);
 
 let accountId = "";
-let username = "";
 
-function setAccount(account) {
+const setAccount = function (account) {
   accountId = account.homeAccountId;
-  username = account.username;
-  welcomeUser(username);
+  welcomeUser(account.username);
 }
 
-function selectAccount() {
+const selectAccount = function () {
   /**
    * See here for more info on account retrieval: 
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
@@ -94,10 +54,7 @@ function selectAccount() {
   }
 }
 
-// in case of page refresh
-selectAccount();
-
-function handleResponse(response) {
+const handleResponse = function (response) {
   /**
    * To see the full list of response object properties, visit:
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/request-response-object.md#response
@@ -110,7 +67,7 @@ function handleResponse(response) {
   }
 }
 
-function signIn() {
+const signIn = function () {
 
   /**
    * You can pass a custom request object below. This will override the initial configuration. For more information, visit:
@@ -127,7 +84,7 @@ function signIn() {
     });
 }
 
-function signOut() {
+const signOut = function () {
 
   /**
    * You can pass a custom request object below. This will override the initial configuration. For more information, visit:
@@ -143,7 +100,7 @@ function signOut() {
 }
 
 
-function acquireAadToken(request) {
+const acquireAadToken = function (request) {
   /**
   * See here for more information on account retrieval: 
   * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
@@ -175,7 +132,7 @@ function acquireAadToken(request) {
 }
 
 
-async function getCommunicationTokenForTeamsUser() {
+const getCommunicationTokenForTeamsUser = async function () {
   // Acquire a token with a custom scope for Contoso's 3P AAD app
   let apiAccessToken = await acquireAadToken({ scopes: [`${msalConfig.auth.clientId}/.default`] })
 
@@ -194,7 +151,7 @@ async function getCommunicationTokenForTeamsUser() {
       });
       const json = await response.json();
       if (json) {
-        logMessage(JSON.stringify(json));
+        return json.token;
       }
     }
     catch (error) {
@@ -202,3 +159,19 @@ async function getCommunicationTokenForTeamsUser() {
     }
   }
 }
+
+const displayToken = async function () {
+  const tokenCredential = new AzureCommunicationTokenCredential(
+    {
+      tokenRefresher: async () => getCommunicationTokenForTeamsUser(),
+      refreshProactively: true,
+    });
+  const token = await tokenCredential.getToken();
+
+  logMessage(JSON.stringify(token));
+}
+
+// Start the app
+initUI(signIn, signOut, displayToken);
+// in case of page refresh
+selectAccount();

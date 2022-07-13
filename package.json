@@ -1,7 +1,7 @@
 {
-  "name": "exchange-teams-token",
+  "name": "exchange-teams-token-server",
   "version": "1.0.0",
-  "description": "A single-page application secured with MSAL.js that allows users to exchange Teams tokens for communication access tokens.",
+  "description": "A single-page application secured with MSAL.js allowing users to exchange Teams tokens for Communication access tokens.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -38,6 +38,8 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.18"
+    "nodemon": "^2.0.18",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^4.10.0"
   }
 }
