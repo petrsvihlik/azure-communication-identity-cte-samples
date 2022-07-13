@@ -42,11 +42,11 @@ The server part of the sample is based on [Express.js](https://expressjs.com/) a
 1. Edit the `./App/authConfig.js` and set the `msalConfig.auth.clientId` to Contoso's Azure AD App Client ID.
 
     ```js
-        msalConfig = {
-            auth: {
-              clientId: "<CONTOSO_AZURE_AD_APP_CLIENT_ID>"
-            }
+    msalConfig = {
+        auth: {
+          clientId: "<CONTOSO_AZURE_AD_APP_CLIENT_ID>"
         }
+    }
     ```
 
 ## Run the code
