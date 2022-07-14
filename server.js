@@ -55,7 +55,7 @@ app.post('/exchange',
             const identityClient = new CommunicationIdentityClient(COMMUNICATION_SERVICES_CONNECTION_STRING);
 
             // Pass the Teams Azure AD token, Azure App's Client ID and Teams user's oid
-            const communicationIdentityToken = await identityClient.getTokenForTeamsUser(teamsUserAadToken, appId, userId);
+            const communicationIdentityToken = await identityClient.getTokenForTeamsUser({ teamsUserAadToken: teamsUserAadToken, clientId: appId, userObjectId: userId });
 
             res.status(200).send(communicationIdentityToken);
         }
